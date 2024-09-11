@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: coffeApp
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+  config:
+    import: optional:file:.env[.properties]

@@ -11,6 +11,6 @@ CREATE TABLE coffee_machine.recipe_ingredients
     quantity      VARCHAR(50),
     buyers_count BIGINT DEFAULT 0,
     PRIMARY KEY (recipe_id, ingredient_id),
-    FOREIGN KEY (recipe_id) REFERENCES t_coffee (id),
-    FOREIGN KEY (ingredient_id) REFERENCES ingredients (id)
+    FOREIGN KEY (recipe_id) REFERENCES  coffee_machine.t_coffee (id),
+    FOREIGN KEY (ingredient_id) REFERENCES coffee_machine.ingredients (id)
 );

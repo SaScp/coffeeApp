@@ -8,3 +8,6 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
   config:
     import: optional:file:.env[.properties]
+  flyway:
+    enabled: true
+    baseline-on-migrate: true

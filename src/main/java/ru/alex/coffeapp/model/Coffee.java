@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -20,8 +22,6 @@ public class Coffee implements BaseEntity<Long> {
     @Column(name = "name_type", unique = true, nullable = false)
     private String nameType;
 
-    @Column(name = "ingredients", nullable = false)
-    private String ingredients;
 
     @Column(name = "instructions", nullable = false)
     private String instructions;
@@ -31,4 +31,11 @@ public class Coffee implements BaseEntity<Long> {
 
     @Column(name = "calories")
     private Integer calories;
+
+    @OneToMany(mappedBy = "coffee")
+    private List<Recipe> recipes = new ArrayList<>();
+
+    public void addRecipe(Recipe recipe) {
+        recipes.add(recipe);
+    }
 }

@@ -1,4 +1,4 @@
-package ru.alex.coffeapp.model;
+package ru.alex.coffeapp.model.entity;
 
 public interface BaseEntity<T> {
 

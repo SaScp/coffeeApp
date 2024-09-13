@@ -1,8 +1,5 @@
 package ru.alex.coffeapp.dto;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -19,5 +16,5 @@ public class CoffeeDto {
 
     private Integer calories;
 
-    private List<RecipeIngredientsDto> recipeIngredients;
+    private List<RecipeDto> recipe;
 }

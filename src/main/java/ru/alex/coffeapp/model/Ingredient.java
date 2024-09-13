@@ -7,10 +7,10 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "recipe_ingredients", schema = "coffee_machine")
-public class Ingredients implements BaseEntity<Long> {
+@Table(name = "ingredients")
+public class Ingredient implements BaseEntity<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -21,6 +21,7 @@ public class Ingredients implements BaseEntity<Long> {
     private Integer count;
 
     @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "ingredient_id"))
+    @JoinTable(joinColumns = @JoinColumn(name = "ingredient_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "recipe_id", referencedColumnName = "id"))
     private List<Recipe> recipes;
 }

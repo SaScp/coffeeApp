@@ -8,11 +8,11 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "recipe", schema = "coffee_machine")
+@Table(name = "recipe")
 public class Recipe implements BaseEntity<Integer> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "c_name")
@@ -27,6 +27,7 @@ public class Recipe implements BaseEntity<Integer> {
     private Coffee coffee;
 
     @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "recipe_id"))
-    private List<Ingredients> ingredients;
+    @JoinTable(joinColumns = @JoinColumn(name = "recipe_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id", referencedColumnName = "id"))
+    private List<Ingredient> ingredients;
 }

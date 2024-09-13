@@ -11,10 +11,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "t_coffee", schema = "coffee_machine")
+@Table(name = "t_coffee")
 public class Coffee implements BaseEntity<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 

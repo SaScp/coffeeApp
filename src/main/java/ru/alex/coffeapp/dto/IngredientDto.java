@@ -1,6 +1,7 @@
 package ru.alex.coffeapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
@@ -15,8 +16,8 @@ public class IngredientDto {
 
     private String name;
 
-    @JsonIgnore
-    private List<RecipeIngredientsDto> recipeIngredients;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<Integer> recipeIngredients;
 
     private Integer count;
 }

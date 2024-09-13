@@ -11,3 +11,8 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+springdoc:
+  swagger-ui:
+    path: /v3/swagger-ui/swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

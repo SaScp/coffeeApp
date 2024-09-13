@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.alex.coffeapp.controller.openapicontroller.DocCoffeeController;
 import ru.alex.coffeapp.dto.CoffeeDto;
 import ru.alex.coffeapp.dto.RecipeDto;
 import ru.alex.coffeapp.model.entity.BuyingEntity;
@@ -16,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
-public class CoffeeController {
+public class CoffeeController implements DocCoffeeController {
 
     @Qualifier("coffeeServiceImpl")
     private final CoffeeService coffeeService;

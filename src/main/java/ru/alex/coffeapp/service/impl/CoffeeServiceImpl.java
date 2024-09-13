@@ -3,7 +3,6 @@ package ru.alex.coffeapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -84,7 +83,7 @@ public class CoffeeServiceImpl implements CoffeeService {
         List<RecipeDto> recipeDtos = entity.getRecipes().stream()
                 .map(this::convertToRecipeDto)
                 .collect(Collectors.toList());
-        dto.setRecipe(recipeDtos);
+        dto.setRecipes(recipeDtos);
         return dto;
     }
 

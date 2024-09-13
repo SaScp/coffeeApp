@@ -1,5 +1,6 @@
 package ru.alex.coffeapp.model.coffee;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -27,6 +28,7 @@ public class Recipe implements BaseEntity<Integer> {
     private String name;
 
     @Column(name = "quantity_buyers")
+    @Schema(description = "Количество покупателей")
     private Integer quantityBuyers;
 
     @ManyToOne(fetch = FetchType.LAZY)

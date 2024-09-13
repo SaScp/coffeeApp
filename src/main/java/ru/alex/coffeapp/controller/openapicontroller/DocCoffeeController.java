@@ -44,7 +44,7 @@ public interface DocCoffeeController {
                     description = "Выводит каталог кофе",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = List.class)
+                            schema = @Schema(implementation = CoffeeDto.class)
                     )
 
             )

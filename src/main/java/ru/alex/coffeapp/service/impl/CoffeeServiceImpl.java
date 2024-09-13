@@ -3,8 +3,11 @@ package ru.alex.coffeapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
 import ru.alex.coffeapp.dto.CoffeeDto;
 import ru.alex.coffeapp.dto.IngredientDto;
 import ru.alex.coffeapp.dto.RecipeDto;
@@ -16,6 +19,8 @@ import ru.alex.coffeapp.repository.CoffeeRepository;
 import ru.alex.coffeapp.repository.IngredientRepository;
 import ru.alex.coffeapp.repository.RecipeRepository;
 import ru.alex.coffeapp.service.CoffeeService;
+import ru.alex.coffeapp.util.exception.BuyCoffeeException;
+import ru.alex.coffeapp.util.exception.SavedRecipeException;
 
 
 import java.util.List;
@@ -38,15 +43,27 @@ public class CoffeeServiceImpl implements CoffeeService {
 
     private final ModelMapper modelMapper;
 
+    private final List<Validator> validator;
+
     @Override
     @Transactional
-    public Recipe save(RecipeDto recipeDto) {
+    public Recipe save(RecipeDto recipeDto, BindingResult bindingResult) {
+
+        for (var v : validator)
+            if (v.supports(RecipeDto.class)) {
+                v.validate(recipeDto, bindingResult);
+            }
+        if (bindingResult.hasErrors()) {
+            throw new SavedRecipeException("Recipe not saved because " + bindingResult.getFieldError().getDefaultMessage());
+        }
         Recipe recipe = modelMapper.map(recipeDto, Recipe.class);
-        Coffee coffee = coffeeRepository.findById(recipeDto.getCoffeeTypeId()).orElseThrow();
+        Coffee coffee = coffeeRepository.findById(recipeDto.getCoffeeTypeId()).get();
+        List<Ingredient> ingredients = ingredientRepository.findAllByIds(recipeDto.getIngredientsId());
+
         recipe.setCoffee(coffee);
         coffee.addRecipe(recipe);
-        List<Ingredient> ingredients = ingredientRepository.findAllByIds(recipeDto.getIngredientsId());
         recipe.setIngredients(ingredients);
+
         for (var i : ingredients) {
             i.addRecipe(recipe);
         }
@@ -62,35 +79,6 @@ public class CoffeeServiceImpl implements CoffeeService {
                         .collect(Collectors.toList())
         );
     }
-
-    @Override
-    public CompletableFuture<BuyingEntity> buyCoffee(Long recipeId) {
-        return CompletableFuture.supplyAsync(() -> {
-            Recipe recipe = recipeRepository.findById(recipeId).orElseThrow();
-            for (var i : recipe.getIngredients()) {
-                if (i.getCount() == 0) {
-                    throw new RuntimeException();
-                }
-            }
-            for (var i : recipe.getIngredients()) {
-                i.setCount(i.getCount() - 1);
-            }
-            recipe.setQuantityBuyers(recipe.getQuantityBuyers() + 1);
-            recipeRepository.save(recipe);
-            return new BuyingEntity(new Random().nextLong(10000000000L), recipe.getName(), UUID.randomUUID(), recipe.getCost());
-        });
-    }
-
-    @Override
-    public CompletableFuture<RecipeDto> findPopularRecipe() {
-        return CompletableFuture.supplyAsync(() -> {
-                    Recipe recipe = recipeRepository.findByQuantityBuyers().orElseThrow();
-                    RecipeDto map = modelMapper.map(recipe, RecipeDto.class);
-                    return map;
-                }
-        );
-    }
-
     private CoffeeDto convertToCoffeeDto(Coffee entity) {
         CoffeeDto dto = modelMapper.map(entity, CoffeeDto.class);
         List<RecipeDto> recipeDtos = entity.getRecipes().stream()
@@ -108,4 +96,38 @@ public class CoffeeServiceImpl implements CoffeeService {
         dto.setIngredients(ingredientDtos);
         return dto;
     }
+
+    @Override
+    public CompletableFuture<BuyingEntity> buyCoffee(Long recipeId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Recipe recipe = recipeRepository.findById(recipeId).orElseThrow();
+
+            if (isIngredientNotEqualsZero(recipe.getIngredients()))
+                for (var i : recipe.getIngredients()) {
+                    i.setCount(i.getCount() - 1);
+                }
+            else
+                throw new BuyCoffeeException("Not enough ingredients to make coffee");
+
+            recipe.setQuantityBuyers(recipe.getQuantityBuyers() + 1);
+            recipeRepository.save(recipe);
+
+            return new BuyingEntity(new Random().nextLong(10000000000L), recipe.getName(), UUID.randomUUID(), recipe.getCost());
+        });
+    }
+
+    private boolean isIngredientNotEqualsZero(List<Ingredient> ingredients) {
+        return ingredients.stream().noneMatch(ingredient -> ingredient.getCount() == 0);
+    }
+
+    @Override
+    public CompletableFuture<RecipeDto> findPopularRecipe() {
+        return CompletableFuture.supplyAsync(() -> {
+                    Recipe recipe = recipeRepository.findByQuantityBuyers().orElseThrow();
+                    RecipeDto map = modelMapper.map(recipe, RecipeDto.class);
+                    return map;
+                }
+        );
+    }
+
 }

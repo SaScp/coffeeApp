@@ -12,4 +12,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query(value = "select recipe from Recipe recipe order by recipe.quantityBuyers DESC LIMIT 1")
     Optional<Recipe> findByQuantityBuyers();
+
+    boolean existsByName(String name);
 }

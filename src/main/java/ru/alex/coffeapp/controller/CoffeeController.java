@@ -3,6 +3,8 @@ package ru.alex.coffeapp.controller;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.alex.coffeapp.dto.CoffeeDto;
 import ru.alex.coffeapp.dto.RecipeDto;
@@ -22,8 +24,8 @@ public class CoffeeController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/save")
-    public RecipeDto save(@RequestBody RecipeDto ingredientsDto) {
-        return modelMapper.map(coffeeService.save(ingredientsDto), RecipeDto.class);
+    public RecipeDto save(@Validated @RequestBody RecipeDto ingredientsDto, BindingResult bindingResult) {
+        return modelMapper.map(coffeeService.save(ingredientsDto, bindingResult), RecipeDto.class);
     }
     @GetMapping("/catalog")
     public CompletableFuture<List<CoffeeDto>> getCatalog() {
@@ -35,7 +37,7 @@ public class CoffeeController {
         return coffeeService.buyCoffee(Long.parseLong(id));
     }
 
-    @GetMapping("/popluar")
+    @GetMapping("/popular")
     public CompletableFuture<RecipeDto> popular() {
         return coffeeService.findPopularRecipe();
     }
